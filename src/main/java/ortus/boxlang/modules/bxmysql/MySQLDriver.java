@@ -22,7 +22,7 @@ import java.util.Map;
 import ortus.boxlang.runtime.config.segments.DatasourceConfig;
 import ortus.boxlang.runtime.dynamic.casters.StringCaster;
 import ortus.boxlang.runtime.jdbc.drivers.DatabaseDriverType;
-import ortus.boxlang.runtime.jdbc.drivers.IJDBCDriver;
+import ortus.boxlang.runtime.jdbc.drivers.GenericJDBCDriver;
 import ortus.boxlang.runtime.scopes.Key;
 import ortus.boxlang.runtime.types.IStruct;
 import ortus.boxlang.runtime.types.Struct;
@@ -32,36 +32,12 @@ import ortus.boxlang.runtime.types.util.StructUtil;
  * The HyperSQL JDBC Driver
  * https://hsqldb.org/doc/2.0/guide/dbproperties-chapt.html#dpc_connection_url
  */
-public class MySQLDriver implements IJDBCDriver {
+public class MySQLDriver extends GenericJDBCDriver {
 
-	/**
-	 * The name of the driver
-	 */
-	protected static final Key					NAME						= new Key( "Mysql" );
-
-	/**
-	 * The class name of the driver
-	 */
-	protected static final String				DRIVER_CLASS_NAME			= "org.hsqldb.jdbc.JDBCDriver";
-
-	/**
-	 * The default delimiter for the custom parameters
-	 */
-	protected static final String				DEFAULT_DELIMITER			= "&";
-
-	/**
-	 * Default Protocols Map
-	 */
-	protected static final Map<String, String>	DEFAULT_PROTOCOLS			= Map.of(
+	protected static final String				DEFAULT_PROTOCOL			= "";
+	protected static final Map<String, String>	AVAILABLE_PROTOCOLS			= Map.of(
 	    "loadbalance", "loadBalance",
 	    "replication", "replication"
-	);
-
-	/**
-	 * The default parameters for the connection URL
-	 * These are added to the connection URL as query parameters
-	 */
-	protected static final IStruct				DEFAULT_PARAMS				= Struct.of(
 	);
 
 	/**
@@ -85,22 +61,23 @@ public class MySQLDriver implements IJDBCDriver {
 	    "maintainTimeStats", false
 	);
 
-	@Override
-	public Key getName() {
-		return NAME;
-	}
-
-	@Override
-	public DatabaseDriverType getType() {
-		return DatabaseDriverType.MYSQL;
-	}
+	/**
+	 * The protocol in use for the jdbc connection
+	 */
+	protected String							protocol					= DEFAULT_PROTOCOL;
 
 	/**
-	 * The class name of the driver
+	 * Constructor
 	 */
-	@Override
-	public String getClassName() {
-		return DRIVER_CLASS_NAME;
+	public MySQLDriver() {
+		super();
+		this.name					= new Key( "Mysql" );
+		this.type					= DatabaseDriverType.MYSQL;
+		// org.apache.derby.jdbc.ClientDriver For client connections
+		this.driverClassName		= "com.mysql.cj.jdbc.Driver";
+		this.defaultDelimiter		= "&";
+		this.defaultCustomParams	= Struct.of();
+		this.defaultProperties		= DEFAULT_HIKARI_PROPERTIES;
 	}
 
 	@Override
@@ -108,7 +85,7 @@ public class MySQLDriver implements IJDBCDriver {
 		// Validate the database
 		String database = ( String ) config.properties.getOrDefault( "database", "" );
 		if ( database.isEmpty() ) {
-			throw new IllegalArgumentException( "The database property is required for the HyperSQL JDBC Driver" );
+			throw new IllegalArgumentException( "The database property is required for the MySQL JDBC Driver" );
 		}
 
 		// Validate the host
@@ -117,15 +94,19 @@ public class MySQLDriver implements IJDBCDriver {
 			host = "localhost";
 		}
 
-		// Default the protocol to mem
-		String protocol = ( String ) config.properties.getOrDefault( "protocol", "" );
-		if ( protocol.length() > 0 && !DEFAULT_PROTOCOLS.containsKey( protocol ) ) {
+		// Verify if we have a protocol
+		this.protocol = ( String ) config.properties.getOrDefault( "protocol", "" );
+		if ( protocol.length() > 0 && !AVAILABLE_PROTOCOLS.containsKey( protocol ) ) {
 			throw new IllegalArgumentException(
-			    "The protocol property is invalid for the MySQL JDBC Driver: [" + protocol + "]. Available protocols are: " +
-			        String.join( ", ", DEFAULT_PROTOCOLS.keySet() )
+			    String.format(
+			        "The protocol '%s' is not valid for the MySQL Driver. Available protocols are %s",
+			        this.protocol,
+			        AVAILABLE_PROTOCOLS.keySet().toString()
+			    )
 			);
 		}
 		// Append the : to the protocol if it exists
+
 		if ( protocol.length() > 0 ) {
 			protocol += ":";
 		}
@@ -136,30 +117,20 @@ public class MySQLDriver implements IJDBCDriver {
 			port = "3306";
 		}
 
-		// Custom Params
-		IStruct params = new Struct( DEFAULT_PARAMS );
 		// If the custom parameters are a string, convert them to a struct
 		if ( config.properties.get( Key.custom ) instanceof String castedParams ) {
-			config.properties.put( Key.custom, StructUtil.fromQueryString( castedParams, DEFAULT_DELIMITER ) );
+			config.properties.put( Key.custom, StructUtil.fromQueryString( castedParams, this.defaultDelimiter ) );
 		}
-		// Add the custom parameters
-		config.properties.getAsStruct( Key.custom ).forEach( params::put );
-
-		// Add Hikari Defaults if they don't exist into the properties
-		DEFAULT_HIKARI_PROPERTIES.forEach( ( key, value ) -> {
-			if ( !config.properties.containsKey( key ) ) {
-				config.properties.put( key, value );
-			}
-		} );
+		IStruct customParams = config.properties.getAsStruct( Key.custom );
 
 		// Add username if it exists
 		if ( config.properties.containsKey( Key.username ) && config.properties.getAsString( Key.username ).length() > 0 ) {
-			params.put( "user", config.properties.get( Key.username ) );
+			customParams.put( "user", config.properties.get( Key.username ) );
 		}
 
 		// Add password if it exists
 		if ( config.properties.containsKey( Key.password ) ) {
-			params.put( Key.password, config.properties.get( Key.password ) );
+			customParams.put( Key.password, config.properties.get( Key.password ) );
 		}
 
 		// Build the connection URL with no host info
@@ -169,7 +140,7 @@ public class MySQLDriver implements IJDBCDriver {
 		    host,
 		    port,
 		    database,
-		    StructUtil.toQueryString( params, DEFAULT_DELIMITER )
+		    customParamsToQueryString( config )
 		);
 	}
 
