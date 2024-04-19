@@ -26,7 +26,6 @@ import ortus.boxlang.runtime.jdbc.drivers.GenericJDBCDriver;
 import ortus.boxlang.runtime.scopes.Key;
 import ortus.boxlang.runtime.types.IStruct;
 import ortus.boxlang.runtime.types.Struct;
-import ortus.boxlang.runtime.types.util.StructUtil;
 
 /**
  * The HyperSQL JDBC Driver
@@ -115,22 +114,6 @@ public class MySQLDriver extends GenericJDBCDriver {
 		String port = StringCaster.cast( config.properties.getOrDefault( "port", "3306" ) );
 		if ( port.isEmpty() || port.equals( "0" ) ) {
 			port = "3306";
-		}
-
-		// If the custom parameters are a string, convert them to a struct
-		if ( config.properties.get( Key.custom ) instanceof String castedParams ) {
-			config.properties.put( Key.custom, StructUtil.fromQueryString( castedParams, this.defaultDelimiter ) );
-		}
-		IStruct customParams = config.properties.getAsStruct( Key.custom );
-
-		// Add username if it exists
-		if ( config.properties.containsKey( Key.username ) && config.properties.getAsString( Key.username ).length() > 0 ) {
-			customParams.put( "user", config.properties.get( Key.username ) );
-		}
-
-		// Add password if it exists
-		if ( config.properties.containsKey( Key.password ) ) {
-			customParams.put( Key.password, config.properties.get( Key.password ) );
 		}
 
 		// Build the connection URL with no host info
