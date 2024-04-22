@@ -28,8 +28,8 @@ import ortus.boxlang.runtime.types.IStruct;
 import ortus.boxlang.runtime.types.Struct;
 
 /**
- * The HyperSQL JDBC Driver
- * https://hsqldb.org/doc/2.0/guide/dbproperties-chapt.html#dpc_connection_url
+ * The MySQL JDBC Driver
+ * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html#connector-j-examples-connection-drivermanager
  */
 public class MySQLDriver extends GenericJDBCDriver {
 
