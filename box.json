@@ -1,6 +1,7 @@
 {
 	"name": "BoxLang MySQL",
 	"version": "@build.version@+@build.number@",
+	"unlisted": true,
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-mysql/@build.version@/bx-mysql-@build.version@.zip",
 	"author": "Ortus Solutions",
 	"homepage": "https://github.com/boxlang-modules/bx-mysql",
@@ -11,9 +12,11 @@
 	},
 	"bugs": "https://github.com/boxlang-modules/bx-mysql/issues",
 	"slug": "bx-mysql",
-	"shortDescription": "Module template for BoxLang modules",
+	"shortDescription": "MySQL JDBC Support for BoxLang",
 	"type": "boxlang-modules",
-	"keywords": ["boxlang"],
+	"keywords": [
+		"boxlang"
+	],
 	"boxlang": {
 		"minimumVersion": "1.0.0",
 		"moduleName": "mysql"
