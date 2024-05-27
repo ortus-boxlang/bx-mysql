@@ -1,7 +1,6 @@
 {
 	"name": "BoxLang MySQL",
 	"version": "@build.version@+@build.number@",
-	"unlisted": true,
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-mysql/@build.version@/bx-mysql-@build.version@.zip",
 	"author": "Ortus Solutions",
 	"homepage": "https://github.com/boxlang-modules/bx-mysql",
