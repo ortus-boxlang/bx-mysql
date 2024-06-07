@@ -34,7 +34,7 @@ dependencies {
 	// You must run `./gradle build -x test` in the BoxLang project
     compileOnly files( 'src/test/resources/libs/boxlang-1.0.0-all.jar' )
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation 'com.mysql:mysql-connector-j:8.3.0'
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
 
     // Testing Dependencies
 	testImplementation files( 'src/test/resources/libs/boxlang-1.0.0-all.jar' )
