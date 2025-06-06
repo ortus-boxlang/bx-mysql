@@ -43,7 +43,7 @@ dependencies {
 	compileOnly files( '../../boxlang/build/distributions/boxlang-' + boxlangVersion + '.jar' )
     compileOnly files( 'src/test/resources/libs/boxlang-' + boxlangVersion + '.jar' )
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation 'com.mysql:mysql-connector-j:8.4.0'
+    implementation 'com.mysql:mysql-connector-j:9.2.0'
 
     // Testing Dependencies
 	testImplementation files( '../../boxlang/build/distributions/boxlang-' + boxlangVersion + '.jar' )
