@@ -3,13 +3,13 @@
 	"version": "@build.version@+@build.number@",
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-mysql/@build.version@/bx-mysql-@build.version@.zip",
 	"author": "Ortus Solutions",
-	"homepage": "https://github.com/boxlang-modules/bx-mysql",
-	"documentation": "https://github.com/boxlang-modules/bx-mysql",
+	"homepage": "https://github.com/ortus-boxlang/bx-mysql",
+	"documentation": "https://github.com/ortus-boxlang/bx-mysql",
 	"repository": {
 		"type": "git",
-		"URL": "https://github.com/boxlang-modules/bx-mysql"
+		"URL": "https://github.com/ortus-boxlang/bx-mysql"
 	},
-	"bugs": "https://github.com/boxlang-modules/bx-mysql/issues",
+	"bugs": "https://github.com/ortus-boxlang/bx-mysql/issues",
 	"slug": "bx-mysql",
 	"shortDescription": "MySQL JDBC Support for BoxLang",
 	"type": "boxlang-modules",
