@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔐 Security
 
+- Bumps com.mysql:mysql-connector-j from 9.2.0 to 9.3.0.
 - Bumped `mysql-connector-j` to version 9.2.0 to address [SNYK-JAVA-COMGOOGLEPROTOBUF-8055227](https://security.snyk.io/vuln/SNYK-JAVA-COMGOOGLEPROTOBUF-8055227)
+
 
 ## [1.0.0] - 2024-06-13
 
