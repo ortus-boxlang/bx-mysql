@@ -16,18 +16,19 @@ plugins {
 /**
  * Project Properties
  */
-sourceCompatibility = jdkVersion
-targetCompatibility = jdkVersion
 ext {
 	buildID = System.getenv( 'BUILD_ID' ) ?: '0'
 	branch = System.getenv( 'BRANCH' ) ?: 'development'
-}
 
-if ( branch == 'development' ) {
-    // If the branch is 'development', ensure the version ends with '-snapshot'
-    // This replaces any existing prerelease identifier with '-snapshot'
-    version = version.contains('-') ? version.replaceAll(/-.*/, '-snapshot') : "${version}-snapshot"
-	boxlangVersion = boxlangVersion.contains('-') ? boxlangVersion.replaceAll(/-.*/, '-snapshot') : "${boxlangVersion}-snapshot"
+	if ( branch == 'development' ) {
+		// If the branch is 'development', ensure the version ends with '-snapshot'
+		// This replaces any existing prerelease identifier with '-snapshot'
+		version = version.contains('-') ? version.replaceAll(/-.*/, '-snapshot') : "${version}-snapshot"
+		boxlangVersion = boxlangVersion.contains('-') ? boxlangVersion.replaceAll(/-.*/, '-snapshot') : "${boxlangVersion}-snapshot"
+	}
+
+	boxlangJarName = "boxlang-${boxlangVersion}.jar"
+	boxlangJarPath = "boxlang/build/libs/${boxlangJarName}"
 }
 
 repositories {
@@ -36,12 +37,27 @@ repositories {
 }
 
 dependencies {
-	// Until BoxLang is published to Maven Central
-	// Look for it in the local build directory
-	// You must run `./gradle build -x test` in the BoxLang project
-	// compileOnly files( '../boxlang/build/libs/boxlang-' + boxlangVersion + '.jar' )
-	compileOnly files( '../../boxlang/build/distributions/boxlang-' + boxlangVersion + '.jar' )
-    compileOnly files( 'src/test/resources/libs/boxlang-' + boxlangVersion + '.jar' )
+	// BoxLang Runtime
+	println "Boxlang version is ${boxlangVersion}, looking for ${boxlangJarName} at ${boxlangJarPath}"
+	if ( file( "../../${boxlangJarPath}" ).exists() ) {
+		// Run against a local BoxLang build
+		// You must run `./gradle build -x test` in the BoxLang project
+		compileOnly files( "../../${boxlangJarPath}" )
+		testImplementation files( "../../${boxlangJarPath}" )
+	} else if ( file( "../${boxlangJarPath}" ).exists() ) {
+		// Run against a local BoxLang build
+		// You must run `./gradle build -x test` in the BoxLang project
+		compileOnly files( "../${boxlangJarPath}" )
+		testImplementation files( "../${boxlangJarPath}" )
+	} else if ( file( "src/test/resources/libs/${boxlangJarName}" ).exists() ) {
+		// Downloaded Dependencies
+		compileOnly files( "src/test/resources/libs/${boxlangJarName}" )
+		testImplementation files( "src/test/resources/libs/${boxlangJarName}" )
+	} else {
+		// no snapshots on maven
+		compileOnly "io.boxlang:boxlang:${boxlangVersion.replaceAll(/-snapshot/, '')}"
+	}
+
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
     implementation 'com.mysql:mysql-connector-j:9.4.0'
 
@@ -56,6 +72,9 @@ dependencies {
 }
 
 java {
+	// Set Java version compatibility, Gradle 9-style.
+	sourceCompatibility = jdkVersion
+	targetCompatibility = jdkVersion
     // Produces a javadocs jar
 	withJavadocJar()
 }
@@ -64,7 +83,7 @@ compileJava {
 	// Compiler Options
 	options.incremental = true
 	options.encoding = 'UTF-8'
-	options.debug()
+	options.debug = true
 }
 
 compileTestJava{
