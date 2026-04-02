@@ -48,7 +48,7 @@ dependencies {
 	}
 
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation 'com.mysql:mysql-connector-j:9.4.0'
+    implementation 'com.mysql:mysql-connector-j:9.6.0'
 
     // Testing Dependencies
 	testImplementation files( '../../boxlang/build/distributions/boxlang-' + boxlangVersion + '.jar' )
