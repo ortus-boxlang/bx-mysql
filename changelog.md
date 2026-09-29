@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- Snapshot builds were published to the stable version folder (`bx-mysql/1.2.0/`) instead of `bx-mysql/1.2.0-snapshot/`, so `bx-mysql@be` installs returned a 404. The release workflow now appends `-snapshot` to the version on `development`.
+
 ### 🛠 Build
 
 - CI now runs Gradle through the project wrapper (`./gradlew`) instead of the Gradle setup action and a separately pinned Gradle version.
