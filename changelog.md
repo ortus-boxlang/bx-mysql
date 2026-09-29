@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-29
+
 ### 🐛 Fixed
 
 - Snapshot builds were published to the stable version folder (`bx-mysql/1.2.0/`) instead of `bx-mysql/1.2.0-snapshot/`, so `bx-mysql@be` installs returned a 404. The release workflow now appends `-snapshot` to the version on `development`.
@@ -31,11 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps com.mysql:mysql-connector-j from 9.2.0 to 9.3.0.
 - Bumped `mysql-connector-j` to version 9.2.0 to address [SNYK-JAVA-COMGOOGLEPROTOBUF-8055227](https://security.snyk.io/vuln/SNYK-JAVA-COMGOOGLEPROTOBUF-8055227)
 
-
 ## [1.0.0] - 2024-06-13
 
 - First iteration of this module
 
-[unreleased]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.1...HEAD
-[1.0.1]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.1...v1.0.1
+[unreleased]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.1...v1.2.0
 [1.0.0]: https://github.com/ortus-boxlang/bx-mysql/compare/f2ce71dad5581aa57b4c657144a175f7209dea47...v1.0.0
