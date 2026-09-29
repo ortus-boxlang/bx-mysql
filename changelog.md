@@ -30,8 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2024-06-13
 
-* First iteration of this module
+- First iteration of this module
 
-[Unreleased]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.0...HEAD
-
+[unreleased]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/ortus-boxlang/bx-mysql/compare/v1.0.1...v1.0.1
 [1.0.0]: https://github.com/ortus-boxlang/bx-mysql/compare/f2ce71dad5581aa57b4c657144a175f7209dea47...v1.0.0
