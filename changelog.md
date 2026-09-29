@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🔄 Changed
+
+- All performance defaults (`prepStmtCacheSize`, `cachePrepStmts`, `useServerPrepStmts`, etc.) are now default JDBC URL params (`defaultCustomParams`) instead of default Hikari properties, so they can be overridden via the datasource `custom` struct.
+- Rewrote the readme with installation, inline datasource examples, and the list of default connection parameters.
+
+### 🛠 Build
+
+- PR workflow now uses a concurrency group so a branch push and its PR event no longer run duplicate builds.
+
 ### 🔐 Security
 
 - Bumps com.mysql:mysql-connector-j from 9.2.0 to 9.3.0.
