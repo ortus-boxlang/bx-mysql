@@ -20,10 +20,11 @@ This module provides a BoxLang JDBC driver for MySQL, enabling integration betwe
 
 ## Features
 
-- 🚀 **High Performance**: Built on `com.mysql:mysql-connector-j` with performance-tuned connection defaults
-- ⚙️ **Overridable Defaults**: Every default is a JDBC URL parameter you can override via `custom`
+- 🚀 **High Performance**: Built on the `com.mysql:mysql-connector-j` driver with performance-tuned connection defaults
+- ⚙️ **Overridable Defaults**: Every default is a JDBC URL parameter you can override through `custom`
 - 🔄 **BoxLang Integration**: Native support for `queryExecute()` and datasource definitions
 - ⚖️ **HA Protocols**: Supports the `loadbalance` and `replication` connection protocols
+- ⚡ **Zero Configuration**: Works out of the box with a host, database and credentials
 
 ## Installation
 
@@ -45,6 +46,8 @@ install-bx-module bx-mysql --local
 
 ## Quick Start
 
+Once installed, define a datasource and use it:
+
 ```javascript
 // Application.bx
 this.datasources[ "myDB" ] = {
@@ -62,7 +65,7 @@ result = queryExecute( "SELECT 1 AS test", [], { "datasource": "myDB" } );
 
 ## Configuration Examples
 
-See [BoxLang's Defining Datasources](https://boxlang.ortusbooks.com/boxlang-language/syntax/queries#defining-datasources) for full details on where and how to define datasources.
+See [BoxLang's Defining Datasources](https://boxlang.ortusbooks.com/boxlang-language/syntax/queries#defining-datasources) documentation for full examples on where and how to construct a datasource connection pool.
 
 ### Application-Level Datasource
 
@@ -99,13 +102,13 @@ result = queryExecute(
 
 ### Protocols
 
-Use `protocol` for `loadbalance` or `replication` connections. Any other value throws an error.
+Set `protocol` to use a high availability connection mode. Valid values are `loadbalance` and `replication`. Any other value throws an error.
 
 ```javascript
 this.datasources[ "haDB" ] = {
     "driver"  : "mysql",
     "protocol": "loadbalance",
-    "host"    : "node1:3306,node2:3306",
+    "host"    : "db.example.com",
     "database": "mydb",
     "username": "app",
     "password": "secret"
@@ -114,7 +117,8 @@ this.datasources[ "haDB" ] = {
 
 ## Default Connection Parameters
 
-Every default below is appended to the JDBC URL as a query string parameter. Because they are URL parameters (not fixed pool properties), you can override any of them with the `custom` struct.
+Every default below is appended to the JDBC URL as a query string parameter. Because they are URL parameters and not fixed pool properties, you can override any of them with the `custom` struct.
+
 See the [Connector/J performance notes](https://cdn.oreillystatic.com/en/assets/1/event/21/Connector_J%20Performance%20Gems%20Presentation.pdf) for background.
 
 | Parameter | Default | Purpose |
@@ -132,7 +136,7 @@ See the [Connector/J performance notes](https://cdn.oreillystatic.com/en/assets/
 
 ### Overriding Defaults
 
-Add any Connector/J parameter to `custom`. Your values win over the defaults, and the remaining defaults still apply.
+Add any [MySQL Connector/J parameter](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html) to `custom`. Your values win over the defaults, and the remaining defaults still apply.
 
 ```javascript
 this.datasources[ "myDB" ] = {
@@ -144,8 +148,7 @@ this.datasources[ "myDB" ] = {
         // Override a default
         "useServerPrepStmts": false,
         // Add your own
-        "connectTimeout": 5000,
-        "useSSL": true
+        "connectTimeout": 5000
     }
 };
 ```
@@ -156,36 +159,148 @@ this.datasources[ "myDB" ] = {
 "custom": "useServerPrepStmts=false&connectTimeout=5000"
 ```
 
+## Usage Examples
+
+### Basic Database Operations
+
+```javascript
+// Create a table
+queryExecute( "
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+", [], { "datasource": "myDB" } );
+
+// Insert data
+queryExecute(
+    "INSERT INTO users ( name, email ) VALUES ( ?, ? )",
+    [ "John Doe", "john@example.com" ],
+    { "datasource": "myDB" }
+);
+
+// Query data
+users = queryExecute(
+    "SELECT * FROM users WHERE email = ?",
+    [ "john@example.com" ],
+    { "datasource": "myDB" }
+);
+
+// Update data
+queryExecute(
+    "UPDATE users SET name = ? WHERE id = ?",
+    [ "John Smith", 1 ],
+    { "datasource": "myDB" }
+);
+```
+
+### Working with Transactions
+
+```javascript
+transaction {
+    queryExecute(
+        "INSERT INTO users ( name, email ) VALUES ( ?, ? )",
+        [ "User 1", "user1@test.com" ],
+        { "datasource": "myDB" }
+    );
+    queryExecute(
+        "INSERT INTO users ( name, email ) VALUES ( ?, ? )",
+        [ "User 2", "user2@test.com" ],
+        { "datasource": "myDB" }
+    );
+}
+```
+
 ## Development
 
 ### Prerequisites
 
 - Java 21+
+- BoxLang Runtime (the build targets 1.3.0, see `gradle.properties`)
 - Gradle (wrapper included)
 
 ### Building from Source
 
 ```bash
+# Clone the repository
 git clone https://github.com/ortus-boxlang/bx-mysql.git
 cd bx-mysql
 
+# Build the module
 ./gradlew build
+
+# Run tests
 ./gradlew test
+
+# Create the module structure for local testing
+./gradlew createModuleStructure
+```
+
+### Project Structure
+
+```
+bx-mysql/
+├── src/
+│   ├── main/
+│   │   ├── bx/
+│   │   │   └── ModuleConfig.bx          # Module configuration
+│   │   ├── java/
+│   │   │   └── ortus/boxlang/modules/
+│   │   │       └── mysql/
+│   │   │           └── MySQLDriver.java  # JDBC driver implementation
+│   │   └── resources/
+│   └── test/
+│       └── java/                        # Unit tests
+├── build.gradle                         # Build configuration
+├── box.json                             # ForgeBox module manifest
+└── readme.md                            # This file
+```
+
+### Testing
+
+```bash
+# Run all tests
+./gradlew test
+
+# Run a specific test class
+./gradlew test --tests "MySQLDriverTest"
 ```
 
 ### Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes and add tests
-4. Ensure all tests pass (`./gradlew test`)
-5. Format your code (`./gradlew spotlessApply`)
-6. Open a Pull Request
+3. Make your changes
+4. Add tests for your changes
+5. Ensure all tests pass (`./gradlew test`)
+6. Format your code (`./gradlew spotlessApply`)
+7. Commit your changes (`git commit -m 'Add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
+
+## Troubleshooting
+
+### Common Issues
+
+#### Database property is required
+
+```
+The database property is required. Ensure your datasource configuration includes:
+"database": "mydb"
+```
+
+#### Invalid protocol
+
+```
+The protocol 'x' is not valid for the MySQL Driver. Available protocols are [loadbalance, replication]
+```
 
 ## Resources
 
 - **Documentation**: [BoxLang Database Guide](https://boxlang.ortusbooks.com/boxlang-language/syntax/queries)
-- **MySQL Connector/J**: [Configuration Properties](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html)
+- **MySQL Connector/J**: [Documentation](https://dev.mysql.com/doc/connector-j/en/)
 - **Issues & Support**: [GitHub Issues](https://github.com/ortus-boxlang/bx-mysql/issues)
 - **ForgeBox**: [bx-mysql Package](https://forgebox.io/view/bx-mysql)
 
