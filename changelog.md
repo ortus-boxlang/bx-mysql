@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🛠 Build
+
+- CI now runs Gradle through the project wrapper (`./gradlew`) instead of the Gradle setup action and a separately pinned Gradle version.
+
 ### 🔄 Changed
 
 - All performance defaults (`prepStmtCacheSize`, `cachePrepStmts`, `useServerPrepStmts`, etc.) are now default JDBC URL params (`defaultCustomParams`) instead of default Hikari properties, so they can be overridden via the datasource `custom` struct.

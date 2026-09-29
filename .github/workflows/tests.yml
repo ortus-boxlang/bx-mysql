@@ -9,7 +9,6 @@ on:
 
 env:
   MODULE_ID: ${{ github.event.repository.name }}
-  GRADLE_VERSION: 8.7
 
 jobs:
   tests:
@@ -36,16 +35,11 @@ jobs:
           distribution: "temurin"
           java-version: ${{ matrix.jdkVersion }}
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          gradle-version: ${{ env.GRADLE_VERSION }}
-
       - name: Test Module
         run: |
-          gradle downloadBoxLang -PboxlangVersion="${{ matrix.boxlangVersion }}"
+          ./gradlew downloadBoxLang -PboxlangVersion="${{ matrix.boxlangVersion }}"
           # this is done in order to build the module structure before testing
-          gradle shadowJar test --stacktrace --console=plain -PboxlangVersion="${{ matrix.boxlangVersion }}"
+          ./gradlew shadowJar test --stacktrace --console=plain -PboxlangVersion="${{ matrix.boxlangVersion }}"
 
       - name: Upload Test Results
         if: always()
