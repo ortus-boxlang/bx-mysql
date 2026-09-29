@@ -33,8 +33,8 @@ import ortus.boxlang.runtime.types.Struct;
  */
 public class MySQLDriver extends GenericJDBCDriver {
 
-	protected static final String				DEFAULT_PROTOCOL			= "";
-	protected static final Map<String, String>	AVAILABLE_PROTOCOLS			= Map.of(
+	protected static final String				DEFAULT_PROTOCOL		= "";
+	protected static final Map<String, String>	AVAILABLE_PROTOCOLS		= Map.of(
 	    "loadbalance", "loadBalance",
 	    "replication", "replication"
 	);
@@ -44,7 +44,7 @@ public class MySQLDriver extends GenericJDBCDriver {
 	 * These are appended to the JDBC URL and can be overridden by the datasource's `custom` struct.
 	 * https://cdn.oreillystatic.com/en/assets/1/event/21/Connector_J%20Performance%20Gems%20Presentation.pdf
 	 */
-	protected static final IStruct				DEFAULT_CUSTOM_PARAMS		= Struct.of(
+	protected static final IStruct				DEFAULT_CUSTOM_PARAMS	= Struct.of(
 	    // This sets the number of prepared statements that the driver will cache per connection
 	    "prepStmtCacheSize", 250,
 	    // This is the maximum length of a prepared SQL statement that the driver will cache
@@ -64,7 +64,7 @@ public class MySQLDriver extends GenericJDBCDriver {
 	/**
 	 * The protocol in use for the jdbc connection
 	 */
-	protected String							protocol					= DEFAULT_PROTOCOL;
+	protected String							protocol				= DEFAULT_PROTOCOL;
 
 	/**
 	 * Constructor
