@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🛠 Build
 
-- PR workflow now uses a concurrency group so a branch push and its PR event no longer run duplicate builds. The format check job now runs on `ubuntu-latest` (the retired `ubuntu-20.04` runner left the PR workflow queued forever).
+- PR workflow now uses a concurrency group so a branch push and its PR event no longer run duplicate builds. The format check job now runs on `ubuntu-latest` (the retired `ubuntu-20.04` runner left the PR workflow queued forever). Removed the CommandBox `format:check` step (no such script exists; `./gradlew spotlessCheck` is the format check).
 
 ### 🔐 Security
 
