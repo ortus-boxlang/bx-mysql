@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐛 Fixed
 
 - Snapshot builds were published to the stable version folder (`bx-mysql/1.2.0/`) instead of `bx-mysql/1.2.0-snapshot/`, so `bx-mysql@be` installs returned a 404. The release workflow now appends `-snapshot` to the version on `development`.
+- `downloadBoxLang` now falls back to the stable BoxLang release jar when no snapshot exists for the configured `boxlangVersion`. BoxLang only publishes snapshots for its next dev version, so a `development` build against a released version failed with a 404.
 
 ### 🛠 Build
 
